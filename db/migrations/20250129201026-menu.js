@@ -2,26 +2,26 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) =>
-      queryInterface.createTable('users', {
+      queryInterface.createTable('menu', {
         id: {
           type: Sequelize.DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
         },
-        user_name: {
+        product_name: {
           type: Sequelize.DataTypes.STRING(120),
           allowNull: false,
         },
-        email: {
-          type: Sequelize.DataTypes.STRING(75),
-          allowNull: false,
-          unique: true,
-          validate: {
-            isEmail: true,
-          }
+        description: {
+          type: Sequelize.DataTypes.STRING(500),
+          allowNull: true,
         },
-        password: {
-          type: Sequelize.DataTypes.STRING(100),
+        price: {
+          type: Sequelize.DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+        },
+        stock: {
+          type: Sequelize.DataTypes.INTEGER,
           allowNull: false,
         },
         createdAt: {
@@ -30,10 +30,6 @@ module.exports = {
         updatedAt: {
           type: Sequelize.DataTypes.DATE,
         },
-        authToken: {
-          type: Sequelize.DataTypes.STRING(500), 
-          allowNull: true, 
-        },
       }),
-  down: (queryInterface) => queryInterface.dropTable('users'),
+  down: (queryInterface) => queryInterface.dropTable('menu'),
 }

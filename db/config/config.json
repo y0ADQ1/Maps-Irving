@@ -1,21 +1,24 @@
 {
   "development": {
     "username": "root",
-    "password": 8721,
+    "password": "8721",
+    "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": 8721,
+    "password": "8721",
+    "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": 8721,
+    "password": "8721",
+    "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
