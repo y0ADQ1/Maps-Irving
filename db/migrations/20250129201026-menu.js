@@ -20,10 +20,6 @@ module.exports = {
           type: Sequelize.DataTypes.DECIMAL(10, 2),
           allowNull: false,
         },
-        stock: {
-          type: Sequelize.DataTypes.INTEGER,
-          allowNull: false,
-        },
         createdAt: {
           type: Sequelize.DataTypes.DATE,
         },

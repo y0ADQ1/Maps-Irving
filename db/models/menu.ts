@@ -13,13 +13,12 @@ const sequelize = new Sequelize(
 );
 
 interface MenuAtributes {
-    id: number;
+    id?: number;
     product_name: string;
     description: string;
     price: number;
-    stock: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export default class Menu extends Model <MenuAtributes> implements MenuAtributes { 
@@ -27,7 +26,6 @@ export default class Menu extends Model <MenuAtributes> implements MenuAtributes
     public product_name!: string;
     public description!: string;
     public price!: number;
-    public stock!: number;
     public createdAt!: Date;
     public updatedAt!: Date;
 }
@@ -48,10 +46,6 @@ Menu.init({
     },
     price: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
-    },
-    stock: {
-        type: DataTypes.INTEGER,
         allowNull: false
     },
     createdAt: {
