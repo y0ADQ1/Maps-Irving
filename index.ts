@@ -1,9 +1,11 @@
 require('dotenv').config();
+import bodyParser from 'body-parser';
 import express from 'express';
+import router from './routes/authRoutes';
 
 const app = express();
-app.use(express.json());
-//rutas para las apis
+app.use(bodyParser.json());
+app.use('/api/auth', router);
 
 const PORT = process.env.PORT || 3036;
 app.listen(PORT, () => {

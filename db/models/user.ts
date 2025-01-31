@@ -1,6 +1,7 @@
 require('dotenv').config();
 import { DataTypes, Sequelize } from "sequelize";
 import { Model } from 'sequelize';
+import bcrypt from 'bcrypt';
 
 const sequelize = new Sequelize(
     process.env.DB_NAME ?? '',
@@ -13,13 +14,13 @@ const sequelize = new Sequelize(
 );
 
 interface UsersAtributes{
-    id: number;
+    id?: number;
     user_name: string;
     email: string;
     password: string;
-    createdAt: Date;
-    updatedAt: Date;
-    authToken: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    authToken?: string;
 }
 
 
@@ -70,5 +71,10 @@ Users.init({
     modelName: 'user',
     tableName: 'users',
     timestamps: true,
+    hooks: {
+    beforeCreate: async (user) => {
+        user.password = await bcrypt.hash(user.password, 10);
+        },
+    }
 }
 );
