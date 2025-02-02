@@ -13,15 +13,15 @@ const sequelize = new Sequelize(
 );
 
 interface PeopleAtributes {
-    id: number;
+    id?: number;
     name: string;
     last_name: string;
     birthdate: Date;
     cellphone_number: number;
     userId: number;
-    delivery_men: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    delivery_men?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export default class People extends Model <PeopleAtributes> implements PeopleAtributes { 
