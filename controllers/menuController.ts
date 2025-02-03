@@ -8,9 +8,9 @@ interface CartItem {
     quantity: number;
 }
 
-let cart: CartItem[] = [];
+let userCarts: { [userId: number]: CartItem[] } = {};
 
-export const showMenu = async (res: Response): Promise<void> => {
+export const showMenu = async (req: Request, res: Response): Promise<void> => {
     try {
         const menuItems = await Menu.findAll({
             attributes: ['product_name', 'description', 'price']
@@ -23,9 +23,15 @@ export const showMenu = async (res: Response): Promise<void> => {
     }
 };
 
-export const addToCart = async (req: Request, res: Response): Promise<void> => {
+export const addToCart = async (req: Request & { userId?: number }, res: Response): Promise<void> => {
     try {
         const { productId, quantity } = req.body;
+        const userId = req.userId;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Usuario no autenticado' });
+            return;
+        }
 
         const product = await Menu.findByPk(productId);
         if (!product) {
@@ -33,11 +39,15 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const existingItem = cart.find(item => item.productId === productId);
+        if (!userCarts[userId]) {
+            userCarts[userId] = [];
+        }
+
+        const existingItem = userCarts[userId].find(item => item.productId === productId);
         if (existingItem) {
             existingItem.quantity += quantity;
         } else {
-            cart.push({
+            userCarts[userId].push({
                 productId: product.id,
                 product_name: product.product_name,
                 price: product.price,
@@ -45,47 +55,82 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
             });
         }
 
-        res.status(200).json({ message: 'Producto agregado al carrito', cart });
+        res.status(200).json({ message: 'Producto agregado al carrito', cart: userCarts[userId] });
     } catch (error) {
         console.error('Error al agregar producto al carrito:', error);
         res.status(500).json({ message: 'Error al agregar producto al carrito' });
     }
 };
 
-export const removeFromCart = async (req: Request, res: Response): Promise<void> => {
+export const removeFromCart = async (req: Request & { userId?: number }, res: Response): Promise<void> => {
     try {
         const { productId } = req.params;
+        const userId = req.userId;
 
-        const itemIndex = cart.findIndex(item => item.productId === parseInt(productId));
+        if (!userId) {
+            res.status(401).json({ message: 'Usuario no autenticado' });
+            return;
+        }
+
+        if (!userCarts[userId]) {
+            res.status(404).json({ message: 'Carrito no encontrado' });
+            return;
+        }
+
+        const itemIndex = userCarts[userId].findIndex(item => item.productId === parseInt(productId));
         if (itemIndex === -1) {
             res.status(404).json({ message: 'Producto no encontrado en el carrito' });
             return;
         }
 
-        cart.splice(itemIndex, 1);
+        userCarts[userId].splice(itemIndex, 1);
 
-        res.status(200).json({ message: 'Producto eliminado del carrito', cart });
+        res.status(200).json({ message: 'Producto eliminado del carrito', cart: userCarts[userId] });
     } catch (error) {
         console.error('Error al eliminar producto del carrito:', error);
         res.status(500).json({ message: 'Error al eliminar producto del carrito' });
     }
 };
 
-export const getCart = async (req: Request, res: Response): Promise<void> => {
+export const getCart = async (req: Request & { userId?: number }, res: Response): Promise<void> => {
     try {
-        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const userId = req.userId;
 
-        res.status(200).json({ cart, total });
+        if (!userId) {
+            res.status(401).json({ message: 'Usuario no autenticado' });
+            return;
+        }
+
+        if (!userCarts[userId]) {
+            res.status(404).json({ message: 'Carrito no encontrado' });
+            return;
+        }
+
+        const total = userCarts[userId].reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+        res.status(200).json({ cart: userCarts[userId], total });
     } catch (error) {
         console.error('Error al obtener el carrito:', error);
         res.status(500).json({ message: 'Error al obtener el carrito' });
     }
 };
 
-export const clearCart = async (req: Request, res: Response): Promise<void> => {
+export const clearCart = async (req: Request & { userId?: number }, res: Response): Promise<void> => {
     try {
-        cart = []; 
-        res.status(200).json({ message: 'Carrito vaciado', cart });
+        const userId = req.userId;
+
+        if (!userId) {
+            res.status(401).json({ message: 'Usuario no autenticado' });
+            return;
+        }
+
+        if (!userCarts[userId]) {
+            res.status(404).json({ message: 'Carrito no encontrado' });
+            return;
+        }
+
+        userCarts[userId] = [];
+        res.status(200).json({ message: 'Carrito vaciado', cart: userCarts[userId] });
     } catch (error) {
         console.error('Error al vaciar el carrito:', error);
         res.status(500).json({ message: 'Error al vaciar el carrito' });
