@@ -65,24 +65,41 @@ const ErrorMessage = styled.p`
 `;
 
 const Registro = () => {
-  const [username, setUsername] = useState<string>('');
+  const [user_name, setUser_name] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleRegistro = (e: React.FormEvent) => {
+  const handleRegistro = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (username === '' || email === '' || password === '') {
+    if (user_name === '' || email === '' || password === '') {
       setError('Por favor, completa todos los campos.');
       return;
     }
 
-    // Simulación de registro básico (puedes conectarlo a tu backend)
-    console.log('Registro exitoso:', { username, email, password });
-    setError(null);
-    navigate('/'); // Redirige al inicio después de un registro exitoso
+    try {
+        const response = await fetch('http://127.0.0.1:8082/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_name, email, password }), 
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setError(null);
+          navigate('/'); 
+        } else {
+          setError(data.message || 'Credenciales incorrectas');
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        setError('Error al conectar con el servidor');
+      }
   };
 
   return (
@@ -95,8 +112,8 @@ const Registro = () => {
             <Label>Nombre de Usuario:</Label>
             <Input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={user_name}
+              onChange={(e) => setUser_name(e.target.value)}
               placeholder="Introduce tu nombre de usuario"
             />
           </FormGroup>
