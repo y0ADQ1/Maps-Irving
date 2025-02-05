@@ -3,9 +3,9 @@ import axios from 'axios';
 
 const API_KEY = 'AIzaSyDAtj6oTfmn4y2v96lBX6dWheAi8ujKcPQ'; 
 
-const FIXED_ORIGIN = '25.535243102338683, -103.32011697187971'; // cords del negocio
+const FIXED_ORIGIN = '25.535243102338683, -103.32011697187971';
 
-export const getDirections = async (req: Request, res: Response) => { //con esta se obtiene la distancia entre el negocio y el destino
+export const getDirections = async (req: Request, res: Response) => { 
     const { destination } = req.query; 
 
     if (!destination) {
@@ -26,7 +26,7 @@ export const getDirections = async (req: Request, res: Response) => { //con esta
     }
 };
 
-export const simulateDelivery = async (req: Request, res: Response) => { //con esta funcion se simula el movimiento del repartidor
+export const simulateDelivery = async (req: Request, res: Response) => { 
     const { destination } = req.query; 
 
     if (!destination) {

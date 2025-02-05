@@ -43,6 +43,10 @@ module.exports = {
           type: Sequelize.DataTypes.BOOLEAN,
           defaultValue: false,
         },
+        is_free: {
+          type: Sequelize.DataTypes.BOOLEAN,
+          defaultValue: false,
+        },
         createdAt: {
           type: Sequelize.DataTypes.DATE,
         },
