@@ -16,23 +16,23 @@ interface addressesAtributes {
     id?: number;
     peopleId?: number;
     address: string;
-    latitude:  Float64Array;
-    longitude: Float64Array;
+    latitude:  number;
+    longitude: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export default class Addresses extends Model<addressesAtributes> implements addressesAtributes { 
+export default class DeliveryAddresses extends Model<addressesAtributes> implements addressesAtributes { 
     public id!: number;
     public peopleId!: number;
     public address!: string;
-    public latitude!: Float64Array;
-    public longitude!: Float64Array;
+    public latitude!: number;
+    public longitude!: number;
     public createdAt!: Date;
     public updatedAt!: Date;
 }
 
-Addresses.init({
+DeliveryAddresses.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -68,8 +68,8 @@ Addresses.init({
 },
 {
     sequelize,
-    modelName: 'Addresses',
-    tableName: 'Addresses',
+    modelName: 'DeliveryAddresses',
+    tableName: 'deliveryaddresses',
     timestamps: true,
-    paranoid: true,
+    paranoid: false,
 })
