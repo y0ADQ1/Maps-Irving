@@ -72,35 +72,36 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (email === '' || password === '') {
       setError('Por favor, completa todos los campos.');
       return;
     }
-
+  
     try {
-        const response = await fetch('http://127.0.0.1:8082/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }), 
-        });
+      const response = await fetch('http://127.0.0.1:8082/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }), 
+      });
   
-        const data = await response.json();
+      const data = await response.json();
   
-        if (response.ok) {
-          setError(null);
-          navigate('/'); 
-        } else {
-          setError(data.message || 'Credenciales incorrectas');
-        }
-      } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        setError('Error al conectar con el servidor');
+      if (response.ok) {
+        localStorage.setItem('token', data.token); 
+        setError(null);
+        navigate('/'); 
+      } else {
+        setError(data.message || 'Credenciales incorrectas');
       }
-    };
-
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setError('Error al conectar con el servidor');
+    }
+  };
+  
   return (
     <ContenedorLogin>
       <LoginBox>

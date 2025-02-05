@@ -119,6 +119,16 @@ const Inicio = () => {
   };
 
   const handleAddToCart = async (product: Product) => {
+    const productPrice = product.price;
+
+    const productData = {
+      productId: product.id,
+      quantity: 1,
+      price: productPrice,
+    };
+
+    console.log('Producto a agregar:', productData);
+
     try {
       const token = getToken();
       const response = await fetch('http://127.0.0.1:8082/api/auth/addToCart', {
@@ -127,16 +137,21 @@ const Inicio = () => {
           'Content-Type': 'application/json', 
           Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify({ productId: product.id, quantity: 1 })
+        body: JSON.stringify(productData)
       });
 
       if (response.ok) {
         fetchCart();
+      } else {
+        const data = await response.json();
+        console.error('Error al agregar al carrito:', data.message);
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
   };
+
+  
 
   const handleRemoveFromCart = async (productId: number) => {
     try {

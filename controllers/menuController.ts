@@ -13,7 +13,7 @@ let userCarts: { [userId: number]: CartItem[] } = {};
 export const showMenu = async (req: Request, res: Response): Promise<void> => {
     try {
         const menuItems = await Menu.findAll({
-            attributes: ['product_name', 'description', 'price']
+            attributes: ['id', 'product_name', 'description', 'price']
         });
 
         res.status(200).json(menuItems);
