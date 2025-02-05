@@ -78,14 +78,28 @@ const Login = () => {
       return;
     }
 
-    // Simulación de autenticación básica
-    if (email === 'admin@example.com' && password === '123456') {
-      setError(null);
-      navigate('/'); // Redirige al inicio después de un login exitoso
-    } else {
-      setError('Credenciales incorrectas');
-    }
-  };
+    try {
+        const response = await fetch('http://127.0.0.1:8082/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }), 
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setError(null);
+          navigate('/'); 
+        } else {
+          setError(data.message || 'Credenciales incorrectas');
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        setError('Error al conectar con el servidor');
+      }
+    };
 
   return (
     <ContenedorLogin>
