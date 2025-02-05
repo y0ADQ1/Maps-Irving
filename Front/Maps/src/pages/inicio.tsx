@@ -1,24 +1,25 @@
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Card, Button, Row, Col } from 'react-bootstrap';
+import { Card, Button, Row, Col, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-interface Card {
+interface Product {
   product_name: string;
   description: string;
-price: number;
+  price: number;
+  id: number;
 }
 
-const GlobalStyles = styled.div`
-  body, html {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-`;
+interface CartItem {
+  productId: number;
+  product_name: string;
+  price: number;
+  quantity: number;
+}
 
-// Barra de navegación
 const Navbar = styled.nav`
   width: 100vw; 
   height: 80px;
@@ -26,8 +27,6 @@ const Navbar = styled.nav`
   justify-content: space-between; 
   align-items: center; 
   background-color: #333; 
-  padding: 0; 
-  box-sizing: border-box; 
   position: fixed; 
   top: 0; 
   left: 0; 
@@ -55,7 +54,6 @@ const Boton = styled.button`
 
 const Contenedor = styled.div`
   padding-top: 80px; 
-  box-sizing: border-box; 
   width: 98.7vw; 
   min-height: 100vh; 
   display: flex; 
@@ -72,57 +70,130 @@ const Contenido = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  margin-top: 20px;
+`;
 
+const CartButton = styled(Button)`
+  position: fixed;
+  top: 20px;
+  right: 220px;
+  z-index: 1001;
 `;
 
 const Inicio = () => {
-  const [cards, setCards] = useState<Card[]>([]);
-    const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCart, setShowCart] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8082/api/auth/ver_menu');
-        const data = await response.json();
-        setCards(data); 
-      } catch (error) {
-        console.error('Error fetching cards:', error);
-      }
-    };
-
     fetchMenu();
+    fetchCart();
   }, []);
 
-  const handleLogin = () => {
-    navigate('/login');
-  }
+  const getToken = () => localStorage.getItem('token');
 
-  const handleRegistro = () => {
-    navigate('/registro');
-  }
+  const fetchMenu = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8082/api/auth/ver_menu');
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  const fetchCart = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch('http://127.0.0.1:8082/api/auth/getCart', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCart(data.cart);
+      }
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+    }
+  };
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      const token = getToken();
+      const response = await fetch('http://127.0.0.1:8082/api/auth/addToCart', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ productId: product.id, quantity: 1 })
+      });
+
+      if (response.ok) {
+        fetchCart();
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  const handleRemoveFromCart = async (productId: number) => {
+    try {
+      const token = getToken();
+      const response = await fetch(`http://127.0.0.1:8082/api/auth/removeFromCart/${productId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        fetchCart();
+      }
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  };
+
+  const handleClearCart = async () => {
+    try {
+      const token = getToken();
+      await fetch('http://127.0.0.1:8082/api/auth/clearCart', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setCart([]);
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
+  };
+
+  const handleShowCart = () => setShowCart(true);
+  const handleCloseCart = () => setShowCart(false);
 
   return (
     <>
-      <GlobalStyles /> 
       <Navbar>
         <Titulo>VAPOSTACHO</Titulo>
         <div>
-        <Boton onClick={handleLogin}>Login</Boton>
-        <Boton onClick={handleRegistro}>Registro</Boton>
+          <Boton onClick={() => navigate('/login')}>Login</Boton>
+          <Boton onClick={() => navigate('/registro')}>Registro</Boton>
         </div>
       </Navbar>
+      <CartButton variant="primary" onClick={handleShowCart}>
+        <FontAwesomeIcon icon={faShoppingCart} /> {cart.length}
+      </CartButton>
       <Contenedor>
         <Contenido>
           <Row>
-            {cards.map((card) => (
-              <Col key={card.product_name} md={4} className="mb-4">
+            {products.map((product) => (
+              <Col key={product.id} md={4} className="mb-4">
                 <Card style={{ width: '18rem' }}>
                   <Card.Body>
-                    <Card.Title>{card.product_name}</Card.Title>
-                    <Card.Text>{card.description}</Card.Text>
-                    <Card.Text>${card.price}</Card.Text>
-                    <Button variant="primary">Añadir al Carro</Button>
+                    <Card.Title>{product.product_name}</Card.Title>
+                    <Card.Text>{product.description}</Card.Text>
+                    <Card.Text>${product.price}</Card.Text>
+                    <Button variant="primary" onClick={() => handleAddToCart(product)}>Añadir al Carro</Button>
                   </Card.Body>
                 </Card>
               </Col>
@@ -130,6 +201,32 @@ const Inicio = () => {
           </Row>
         </Contenido>
       </Contenedor>
+
+      <Modal show={showCart} onHide={handleCloseCart}>
+        <Modal.Header closeButton>
+          <Modal.Title>Carrito de Compras</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {cart.length === 0 ? (
+            <p>No hay productos en el carrito</p>
+          ) : (
+            <ul>
+              {cart.map(item => (
+                <li key={item.productId}>
+                  {item.product_name} - ${item.price} x {item.quantity}
+                  <Button variant="danger" size="sm" onClick={() => handleRemoveFromCart(item.productId)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseCart}>Cerrar</Button>
+          <Button variant="danger" onClick={handleClearCart}>Vaciar Carrito</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
