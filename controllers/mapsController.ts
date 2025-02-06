@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 import DeliveryAddress from '../db/models/DeliveryAddress';
 
-const API_KEY = 'AIzaSyDAtj6oTfmn4y2v96lBX6dWheAi8ujKcPQ';
+const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const FIXED_ORIGIN = '25.535243102338683, -103.32011697187971'; 
 
 export const getDirections = async (req: Request, res: Response): Promise<void> => {
@@ -65,50 +65,59 @@ export const simulateDelivery = async (req: Request, res: Response): Promise<voi
   }
 };
 
-export const saveDeliveryAddress = async (req: Request & { peopleId?: number }, res: Response): Promise<void> => {
-    const { address, latitude, longitude } = req.body;
-    const peopleId = req.peopleId;
 
-    if (!address || !latitude || !longitude) {
-        res.status(400).json({ error: 'Se requieren address, latitude y longitude' });
-        return;
-    }
+export const saveDeliveryAddress = async (req: RequestWithUser, res: Response): Promise<void> => {
+  const { address, latitude, longitude } = req.body;
+  const peopleId = req.peopleId;
 
-    try {
-        const newAddress = await DeliveryAddress.create({
-            peopleId,
-            address,
-            latitude,
-            longitude,
-        });
+  if (!peopleId) {
+    res.status(401).json({ error: "No autenticado: peopleId no encontrado en el token" });
+    return;
+  }
 
-        res.status(201).json(newAddress);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al guardar la dirección' });
-    }
+  if (!address || !latitude || !longitude) {
+    res.status(400).json({ error: "Se requieren address, latitude y longitude" });
+    return;
+  }
+
+  try {
+    const newAddress = await DeliveryAddress.create({
+      peopleId,
+      address,
+      latitude,
+      longitude,
+    });
+
+    res.status(201).json({ message: 'Dirección guardada correctamente', newAddress });
+  } catch (error) {
+    console.error("Error al guardar la dirección:", error);
+    res.status(500).json({ error: "Error al guardar la dirección" });
+  }
 };
 
 
 type RequestWithUser = Request & { peopleId?: number };
 
 export const getDeliveryAddresses = async (req: RequestWithUser, res: Response): Promise<void> => {
-    const peopleId = req.peopleId;
-    
-    console.log("peopleId recibido:", peopleId);
+  const peopleId = req.peopleId;
 
-    if (!peopleId) {
-        res.status(400).json({ error: 'No se encontró el ID de la persona' });
-        return;
+  if (!peopleId) {
+    res.status(401).json({ error: "No autenticado: peopleId no encontrado en el token" });
+    return;
+  }
+
+  try {
+    const addresses = await DeliveryAddress.findAll({ where: { peopleId } });
+
+    if (!addresses.length) {
+      res.status(404).json({ error: "No se encontraron direcciones para este usuario" });
+      return;
     }
 
-    try {
-        const addresses = await DeliveryAddress.findAll({ where: { peopleId } });
-
-        console.log("Direcciones encontradas:", addresses);
-
-        res.json(addresses);
-    } catch (error) {
-        console.error('Error al obtener las direcciones:', error);
-        res.status(500).json({ error: 'Error al obtener las direcciones' });
-    }
+    res.json(addresses);
+  } catch (error) {
+    console.error("Error al obtener las direcciones:", error);
+    res.status(500).json({ error: "Error al obtener las direcciones" });
+  }
 };
+  

@@ -20,7 +20,7 @@ router.delete('/removeFromCart/:productId', authenticate, removeFromCart);
 router.get('/getCart', authenticate, getCart);
 router.delete('/clearCart', authenticate, clearCart);
 
-router.post('/delivery-addresses', authenticate, saveDeliveryAddress); 
-router.get('/getDeliveryAddress', authenticate, getDeliveryAddresses);
+router.post('/saveDeliveryAddress', authenticate, saveDeliveryAddress);
+router.get('/getDeliveryAddresses', authenticate, getDeliveryAddresses);
 
 export default router;

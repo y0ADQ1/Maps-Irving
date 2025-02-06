@@ -193,6 +193,7 @@ const Inicio = () => {
         <div>
           <Boton onClick={() => navigate('/login')}>Login</Boton>
           <Boton onClick={() => navigate('/registro')}>Registro</Boton>
+          <Button variant="success" onClick={() => navigate('/seleccionar-direccion')}>Proceder con el pedido</Button>
         </div>
       </Navbar>
       <CartButton variant="primary" onClick={handleShowCart}>
