@@ -79,7 +79,7 @@ const SeleccionarDireccion = () => {
 
   const handleSelectAddress = (addressId: number) => {
     console.log('Dirección seleccionada:', addressId);
-    navigate('/confirmar-pedido');
+    navigate('/confirmar-pedido', { state: { selectedAddress: addressId } });
   };
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
@@ -162,7 +162,7 @@ const SeleccionarDireccion = () => {
               <Card>
                 <Card.Body>
                   <Card.Text>{address.address}</Card.Text>
-                  <Button variant="primary" onClick={() => handleSelectAddress(address.id)}>
+                  <Button variant="primary" onClick={() => handleSelectAddress(address)}>
                     Seleccionar
                   </Button>
                 </Card.Body>
