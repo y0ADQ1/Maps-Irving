@@ -75,7 +75,7 @@ const Contenido = styled.div`
 const CartButton = styled(Button)`
   position: fixed;
   top: 20px;
-  right: 220px;
+  right: 400px;
   z-index: 1001;
 `;
 

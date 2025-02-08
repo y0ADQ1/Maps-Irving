@@ -77,9 +77,9 @@ const SeleccionarDireccion = () => {
     }
   };
 
-  const handleSelectAddress = (addressId: number) => {
-    console.log('Dirección seleccionada:', addressId);
-    navigate('/confirmar-pedido', { state: { selectedAddress: addressId } });
+  const handleSelectAddress = (address: Address) => {
+    console.log('Dirección seleccionada:', address);
+    navigate('/confirmar-pedido', { state: { selectedAddress: address } });
   };
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
