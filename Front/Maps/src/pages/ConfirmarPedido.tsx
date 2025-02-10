@@ -67,9 +67,37 @@ const ConfirmarPedido = () => {
   };
 
   const handleConfirmOrder = async () => {
-    // Lógica para confirmar el pedido
-    alert('Pedido confirmado');
-    navigate('/');
+    try {
+      const token = getToken();
+      const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+      const orderData = {
+        clientId: selectedAddress.peopleId, 
+        deliveryAddressId: selectedAddress.id,
+        totalPrice,
+        status: 'pending',
+        cartItems: cart
+      };
+
+      const response = await fetch('http://127.0.0.1:8082/api/auth/confirmOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        alert('Pedido confirmado');
+        navigate('/');
+      } else {
+        alert('Error al confirmar el pedido');
+      }
+    } catch (error) {
+      console.error('Error confirming order:', error);
+      alert('Error al confirmar el pedido');
+    }
   };
 
   return (

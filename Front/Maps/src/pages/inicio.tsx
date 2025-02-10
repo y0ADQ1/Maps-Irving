@@ -54,7 +54,7 @@ const Boton = styled.button`
 
 const Contenedor = styled.div`
   padding-top: 80px; 
-  width: 98.7vw; 
+  width: 100vw; 
   min-height: 100vh; 
   display: flex; 
   justify-content: center; 

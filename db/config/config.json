@@ -1,25 +1,25 @@
 {
   "development": {
-    "username": "Emilio",
-    "password": "jesusemilio12..",
+    "username": "root",
+    "password": "8721",
     "port": 3306,
-    "database": "Maps",
+    "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
-    "username": "Emilio",
-    "password": "jesusemilio12..",
+    "username": "root",
+    "password": "8721",
     "port": 3306,
-    "database": "Maps",
+    "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "Emilio",
-    "password": "jesusemilio12..",
+    "username": "root",
+    "password": "8721",
     "port": 3306,
-    "database": "Maps",
+    "database": "maps",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }

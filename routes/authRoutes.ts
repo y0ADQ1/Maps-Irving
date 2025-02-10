@@ -4,6 +4,7 @@ import { register_personal_data, register_delivery_men } from "../controllers/pe
 import { authenticate } from "../Middlewares/authenticate";
 import { showMenu, addToCart, removeFromCart, getCart, clearCart } from '../controllers/menuController';
 import { saveDeliveryAddress, getDeliveryAddresses } from '../controllers/mapsController';
+import { confirmOrder } from '../controllers/orderController';
 
 const router = express.Router();
 
@@ -22,5 +23,7 @@ router.delete('/clearCart', authenticate, clearCart);
 
 router.post('/saveDeliveryAddress', authenticate, saveDeliveryAddress);
 router.get('/getDeliveryAddresses', authenticate, getDeliveryAddresses);
+
+router.post('/confirmOrder', authenticate, confirmOrder);
 
 export default router;

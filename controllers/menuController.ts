@@ -115,24 +115,15 @@ export const getCart = async (req: Request & { userId?: number }, res: Response)
     }
 };
 
-export const clearCart = async (req: Request & { userId?: number }, res: Response): Promise<void> => {
-    try {
-        const userId = req.userId;
+export const clearCart = async (req: Request & { userId?: number }): Promise<void> => {
+    const userId = req.userId;
 
-        if (!userId) {
-            res.status(401).json({ message: 'Usuario no autenticado' });
-            return;
-        }
-
-        if (!userCarts[userId]) {
-            res.status(404).json({ message: 'Carrito no encontrado' });
-            return;
-        }
-
-        userCarts[userId] = [];
-        res.status(200).json({ message: 'Carrito vaciado', cart: userCarts[userId] });
-    } catch (error) {
-        console.error('Error al vaciar el carrito:', error);
-        res.status(500).json({ message: 'Error al vaciar el carrito' });
+    if (!userId) {
+        throw new Error('Usuario no autenticado');
     }
+
+    if (!userCarts[userId]) {
+        throw new Error('Carrito no encontrado');
+    }
+    userCarts[userId] = [];
 };
