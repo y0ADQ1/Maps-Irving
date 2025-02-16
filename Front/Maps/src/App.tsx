@@ -4,6 +4,7 @@ import Login from './pages/login';
 import Registro from './pages/registro';
 import SeleccionarDireccion from './pages/seleccionar-direccion';
 import ConfirmarPedido from './pages/ConfirmarPedido';
+import OrdersView from './pages/OrdersView';
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/registro" element={<Registro />} />
         <Route path="/seleccionar-direccion" element={<SeleccionarDireccion />} />
         <Route path="/confirmar-pedido" element={<ConfirmarPedido />} />
+        <Route path="/pedidos_repartidor" element={<OrdersView />} />
       </Routes>
     </Router>
   );

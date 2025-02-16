@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Users from '../db/models/user';
+import People from '../db/models/people'
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
@@ -35,11 +36,34 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ message: 'Invalid credentials' });
-      return
+      return;
     }
 
-    const token = generateToken(user);
-    res.status(200).json({ message: 'Login successful', user, token });
+    // Buscar la persona asociada al usuario
+    const person = await People.findOne({ where: { userId: user.id } });
+    if (!person) {
+      res.status(404).json({ message: 'Datos personales no encontrados' });
+      return;
+    }
+
+    // Generar el token
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '10min' }
+    );
+
+    // Devolver la respuesta con información adicional
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        user_name: user.user_name,
+      },
+      isDeliveryMen: person.delivery_men, // Indicar si es un delivery_men
+      token,
+    });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
