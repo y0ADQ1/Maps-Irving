@@ -6,6 +6,7 @@ import { showMenu, addToCart, removeFromCart, getCart, clearCart } from '../cont
 import { saveDeliveryAddress, getDeliveryAddresses } from '../controllers/mapsController';
 import { confirmOrder, getPendingOrders } from '../controllers/orderController';
 
+
 const router = express.Router();
 
 router.post('/register', register);
