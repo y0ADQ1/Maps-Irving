@@ -39,8 +39,8 @@ const handleSubmit = (event: FormEvent): void => {
           <div id="card-cvc" className="conekta-card-cvc"></div>
         </div>
         <button type="submit">Pagar</button>
-        {mensajeError && <div style={{ color: "red" }}>{mensajeError}</div>}
-        {mensajeExito && <div style={{ color: "green" }}>{mensajeExito}</div>}
+        {mensajeError && <div className="mensaje-error">{mensajeError}</div>}
+        {mensajeExito && <div className="mensaje-exito">{mensajeExito}</div>}
       </form>
     </div>
   );
