@@ -79,7 +79,7 @@ const ConfirmarPedido = () => {
         cartItems: cart
       };
 
-      const response = await fetch('http://127.0.0.1:8082/api/auth/confirmOrder', {
+      const response = await fetch('http://127.0.0.1:8082/api/orders/confirmOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
