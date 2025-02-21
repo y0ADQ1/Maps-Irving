@@ -8,6 +8,11 @@ const { clearCart } = require('../controllers/menuController');
 router.post('/confirmOrder', async (req, res) => {
     const { clientId, deliveryAddressId, totalPrice, status, cartItems, email, name, phone, token_id } = req.body;
 
+    // Validación básica de los datos
+    if (!clientId || !deliveryAddressId || !totalPrice || !status || !cartItems || !email || !name || !phone || !token_id) {
+        return res.status(400).json({ message: 'Faltan datos requeridos' });
+    }
+
     try {
         // 1. CREAR EL CLIENTE EN CONEKTA
         const customerResponse = await axios.post(

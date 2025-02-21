@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/seleccionar-direccion" element={<SeleccionarDireccion />} />
         <Route path="/confirmar-pedido" element={<ConfirmarPedido />} />
         <Route path="/pedidos_repartidor" element={<OrdersView />} />
-        <Route path="/Card" element={<ViewCard />} />
+        <Route path="/card" element={<ViewCard />} />
       </Routes>
     </Router>
   );

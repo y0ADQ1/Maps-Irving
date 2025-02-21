@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "",
+    "password": "8721",
     "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",

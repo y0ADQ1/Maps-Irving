@@ -66,39 +66,14 @@ const ConfirmarPedido = () => {
     }
   };
 
-  const handleConfirmOrder = async () => {
-    try {
-      const token = getToken();
-      const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-      const orderData = {
-        clientId: selectedAddress.peopleId, 
-        deliveryAddressId: selectedAddress.id,
-        totalPrice,
-        status: 'pending',
-        cartItems: cart
-      };
-
-      const response = await fetch('http://127.0.0.1:8082/api/orders/confirmOrder', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (response.ok) {
-        alert('Pedido confirmado');
-        navigate('/Card');
-      } else {
-        alert('Error al confirmar el pedido');
-      }
-    } catch (error) {
-      console.error('Error confirming order:', error);
-      alert('Error al confirmar el pedido');
-    }
+  const handleConfirmarPedido = () => {
+    navigate('/card');
   };
+  
+  <Button variant="primary" onClick={handleConfirmarPedido}>
+    Confirmar Pedido
+  </Button>
+  
 
   return (
     <Contenedor>
@@ -126,7 +101,7 @@ const ConfirmarPedido = () => {
           ))}
         </ListGroup>
 
-        <Button variant="primary" onClick={handleConfirmOrder}>
+        <Button variant="primary" onClick={handleConfirmarPedido}>
           Confirmar Pedido
         </Button>
       </Contenido>
