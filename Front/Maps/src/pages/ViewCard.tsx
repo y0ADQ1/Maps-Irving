@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const PagoFormulario = ({ cartItems, total, clientId, deliveryAddressId, email, name, phone }) => {
+interface PagoFormularioProps {
+  cartItems: any[];
+  total: number;
+  clientId: string;
+  deliveryAddressId: string;
+  email: string;
+  name: string;
+  phone: string;
+}
+
+const PagoFormulario: React.FC<PagoFormularioProps> = ({ cartItems, total, clientId, deliveryAddressId, email, name, phone }) => {
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
@@ -9,73 +19,81 @@ const PagoFormulario = ({ cartItems, total, clientId, deliveryAddressId, email, 
   const [mensajeError, setMensajeError] = useState('');
   const [mensajeExito, setMensajeExito] = useState('');
 
-  const handleCardExpiryChange = (e) => {
+  useEffect(() => {
+    if (window.Conekta) {
+      window.Conekta.setPublicKey(import.meta.env.CONEKTA_PUBLIC_KEY_TEST || '');
+    } else {
+      console.error("Conekta no se ha cargado correctamente.");
+    }
+  }, []);
+
+  const handleCardExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ''); // Solo números
     if (value.length <= 4) {
       setCardExpiry(value);
     }
   };
 
-  const handleCardCvcChange = (e) => {
+  const handleCardCvcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, ''); // Solo números
     if (value.length <= 4) {
       setCardCvc(value);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const generarToken = async (cardData: any) => {
+    return new Promise((resolve, reject) => {
+      window.Conekta.Token.create({ card: cardData }, (tokenResponse: any) => {
+        if (tokenResponse.object === 'error') {
+          reject(new Error(tokenResponse.message_to_purchaser));
+        } else {
+          resolve(tokenResponse.id);
+        }
+      });
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validar los datos de la tarjeta
     if (!cardNumber || !cardName || !cardExpiry || !cardCvc) {
       setMensajeError('Por favor, completa todos los campos.');
       return;
     }
 
-    // Generar el token de tarjeta con Conekta
-    Conekta.setPublicKey('tu_llave_publica_de_conekta'); // Reemplaza con tu llave pública
-
     const cardData = {
       number: cardNumber,
       name: cardName,
-      exp_year: cardExpiry.slice(2, 4),
+      exp_year: `20${cardExpiry.slice(2, 4)}`,
       exp_month: cardExpiry.slice(0, 2),
       cvc: cardCvc,
     };
 
-    Conekta.Token.create({ card: cardData }, async (tokenResponse) => {
-      if (tokenResponse.error) {
-        setMensajeError('Error al generar el token de tarjeta: ' + tokenResponse.error.message);
-        return;
+    try {
+      const token_id = await generarToken(cardData);
+
+      const response = await axios.post('/confirmOrder', {
+        clientId,
+        deliveryAddressId,
+        totalPrice: total,
+        status: 'pending',
+        cartItems,
+        email,
+        name,
+        phone,
+        token_id,
+      });
+
+      if (response.status === 201) {
+        setMensajeExito('Pago realizado con éxito.');
+        setMensajeError('');
+      } else {
+        setMensajeError('Error al confirmar el pedido.');
       }
-
-      const token_id = tokenResponse.id;
-
-      try {
-        // Llamar a tu API confirmOrder
-        const response = await axios.post('/confirmOrder', {
-          clientId,
-          deliveryAddressId,
-          totalPrice: total,
-          status: 'pending',
-          cartItems,
-          email,
-          name,
-          phone,
-          token_id,
-        });
-
-        if (response.status === 201) {
-          setMensajeExito('Pago realizado con éxito.');
-          setMensajeError('');
-        } else {
-          setMensajeError('Error al confirmar el pedido.');
-        }
-      } catch (error) {
-        console.error('Error al confirmar el pedido:', error);
-        setMensajeError('Error al confirmar el pedido: ' + error.message);
-      }
-    });
+    } catch (error: any) {
+      console.error('Error al generar el token de tarjeta:', error);
+      setMensajeError(`Error al generar el token de tarjeta: ${error.message}`);
+    }
   };
 
   return (
