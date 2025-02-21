@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, ListGroup, Modal } from 'react-bootstrap';
+import { Button, Card, ListGroup} from 'react-bootstrap';
 import styled from 'styled-components';
 
 interface CartItem {
@@ -90,7 +90,7 @@ const ConfirmarPedido = () => {
 
       if (response.ok) {
         alert('Pedido confirmado');
-        navigate('/');
+        navigate('/Card');
       } else {
         alert('Error al confirmar el pedido');
       }

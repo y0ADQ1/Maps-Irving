@@ -5,6 +5,7 @@ import Registro from './pages/registro';
 import SeleccionarDireccion from './pages/seleccionar-direccion';
 import ConfirmarPedido from './pages/ConfirmarPedido';
 import OrdersView from './pages/OrdersView';
+import ViewCard from './pages/ViewCard';
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/seleccionar-direccion" element={<SeleccionarDireccion />} />
         <Route path="/confirmar-pedido" element={<ConfirmarPedido />} />
         <Route path="/pedidos_repartidor" element={<OrdersView />} />
+        <Route path="/Card" element={<ViewCard />} />
       </Routes>
     </Router>
   );
