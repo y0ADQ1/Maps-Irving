@@ -5,6 +5,9 @@ import cors from 'cors';
 import router from './routes/authRoutes';
 import { Sequelize } from 'sequelize';
 
+// Importar orderController (usando require porque es un archivo JS)
+const orderRoutes = require('./routes/orderController');
+
 dotenv.config();
 
 const app = express();
@@ -16,15 +19,17 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
-app.use('/api/auth', router);
 
-const PORT = process.env.PORT || 3036;
+// Registrar rutas
+app.use('/api/auth', router);
+app.use('/api/orders', orderRoutes); // Agregar rutas de orderController
+
+const PORT = process.env.PORT || 8082;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// Configuración de Sequelize
-const sequelize = new Sequelize("node", "root", "8721", {
+const sequelize = new Sequelize("maps", "root", "8721", {
     host: "127.0.0.1",
     dialect: "mysql"
 });
