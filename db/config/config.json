@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "8721",
+    "password": "",
     "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
@@ -9,7 +9,7 @@
   },
   "test": {
     "username": "root",
-    "password": "8721",
+    "password": "",
     "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
@@ -17,7 +17,7 @@
   },
   "production": {
     "username": "root",
-    "password": "8721",
+    "password": "",
     "port": 3306,
     "database": "maps",
     "host": "127.0.0.1",
