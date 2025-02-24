@@ -53,7 +53,7 @@ const ConfirmarPedido = () => {
   const fetchCart = async () => {
     try {
       const token = getToken();
-      const response = await fetch('http://127.0.0.1:8082/api/auth/getCart', {
+      const response = await fetch('http://127.0.0.1:8084/api/auth/getCart', {
         headers: { Authorization: `Bearer ${token}` },
       });
 

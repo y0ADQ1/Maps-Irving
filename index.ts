@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', router);
 app.use('/api/orders', orderRoutes); // Agregar rutas de orderController
 
-const PORT = process.env.PORT || 8083;
+const PORT = process.env.PORT || 8084;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

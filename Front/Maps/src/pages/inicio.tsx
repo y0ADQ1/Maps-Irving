@@ -94,7 +94,7 @@ const Inicio = () => {
 
   const fetchMenu = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8082/api/auth/ver_menu');
+      const response = await fetch('http://127.0.0.1:8084/api/auth/ver_menu');
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -105,7 +105,7 @@ const Inicio = () => {
   const fetchCart = async () => {
     try {
       const token = getToken();
-      const response = await fetch('http://127.0.0.1:8082/api/auth/getCart', {
+      const response = await fetch('http://127.0.0.1:8084/api/auth/getCart', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -131,7 +131,7 @@ const Inicio = () => {
 
     try {
       const token = getToken();
-      const response = await fetch('http://127.0.0.1:8082/api/auth/addToCart', {
+      const response = await fetch('http://127.0.0.1:8084/api/auth/addToCart', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json', 
@@ -156,7 +156,7 @@ const Inicio = () => {
   const handleRemoveFromCart = async (productId: number) => {
     try {
       const token = getToken();
-      const response = await fetch(`http://127.0.0.1:8082/api/auth/removeFromCart/${productId}`, {
+      const response = await fetch(`http://127.0.0.1:8084/api/auth/removeFromCart/${productId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -172,7 +172,7 @@ const Inicio = () => {
   const handleClearCart = async () => {
     try {
       const token = getToken();
-      await fetch('http://127.0.0.1:8082/api/auth/clearCart', {
+      await fetch('http://127.0.0.1:8084/api/auth/clearCart', {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

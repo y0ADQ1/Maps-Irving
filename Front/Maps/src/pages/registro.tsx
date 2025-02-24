@@ -80,7 +80,7 @@ const Registro = () => {
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:8082/api/auth/register', {
+        const response = await fetch('http://127.0.0.1:8084/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

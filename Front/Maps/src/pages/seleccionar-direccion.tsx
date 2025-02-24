@@ -62,7 +62,7 @@ const SeleccionarDireccion = () => {
   const fetchAddresses = async () => {
     try {
       const token = getToken();
-      const response = await fetch('http://127.0.0.1:8082/api/auth/getDeliveryAddresses', {
+      const response = await fetch('http://127.0.0.1:8084/api/auth/getDeliveryAddresses', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -124,7 +124,7 @@ const SeleccionarDireccion = () => {
       const address = await getAddressFromCoordinates(selectedLocation.lat, selectedLocation.lng);
 
       const token = getToken();
-      const response = await fetch('http://127.0.0.1:8082/api/auth/saveDeliveryAddress', {
+      const response = await fetch('http://127.0.0.1:8084/api/auth/saveDeliveryAddress', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

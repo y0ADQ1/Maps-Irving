@@ -12,7 +12,7 @@ const OrdersView = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8082/api/auth/getPendingOrders', {
+        const response = await axios.get('http://127.0.0.1:8084/api/auth/getPendingOrders', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
