@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, ListGroup} from 'react-bootstrap';
+import { Button, Card, ListGroup } from 'react-bootstrap';
 import styled from 'styled-components';
 
 interface CartItem {
@@ -67,13 +67,8 @@ const ConfirmarPedido = () => {
   };
 
   const handleConfirmarPedido = () => {
-    navigate('/card');
+    navigate('/card', { state: { cart, selectedAddress } });
   };
-  
-  <Button variant="primary" onClick={handleConfirmarPedido}>
-    Confirmar Pedido
-  </Button>
-  
 
   return (
     <Contenedor>

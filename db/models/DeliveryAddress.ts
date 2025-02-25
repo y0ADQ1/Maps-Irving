@@ -73,3 +73,4 @@ DeliveryAddresses.init({
     timestamps: true,
     paranoid: false,
 })
+

@@ -15,7 +15,7 @@ const ViewCard = (props: ViewCardProps) => {
     const [mensajeError, setMensajeError] = useState('');
     const [conektaCargado, setConektaCargado] = useState(false);
     const [mensajeExito, setMensajeExito] = useState('');
-    const [userData, setUserData] = useState<any>({});
+    const [userData, setUserData] = useState<any>({}); // Corrección aquí
 
     const navigate = useNavigate();
 
@@ -24,20 +24,27 @@ const ViewCard = (props: ViewCardProps) => {
         script.src = 'https://cdn.conekta.io/js/latest/conekta.js';
         script.async = true;
         document.body.appendChild(script);
+
         script.onload = () => {
             console.log('Conekta script loaded');
             setConektaCargado(true);
 
             if (window.Conekta) {
-                window.Conekta.setPublicKey('key_Pxl2AViTVn0qywVBHwbcb0M'); 
+                window.Conekta.setPublicKey('key_Pxl2AViTVn0qywVBHwbcb0M');
                 console.log('Conekta public key set');
             } else {
                 console.error('Conekta object not found');
+                setMensajeError('Conekta no se cargó correctamente.');
             }
         };
+
         script.onerror = () => {
             setMensajeError('Error loading Conekta script');
             console.error('Error loading Conekta script');
+        };
+
+        return () => {
+            document.body.removeChild(script);
         };
     }, []);
 
@@ -50,6 +57,7 @@ const ViewCard = (props: ViewCardProps) => {
                 },
             })
                 .then((response) => {
+                    console.log('Datos del carro:', response.data);
                     setUserData(response.data);
                 })
                 .catch((error) => {
@@ -93,14 +101,6 @@ const ViewCard = (props: ViewCardProps) => {
         }
 
         try {
-            console.log('Datos de la tarjeta:', {
-                number: cardNumber,
-                name: cardName,
-                exp_year: `20${cardExpiry.slice(2, 4)}`,
-                exp_month: cardExpiry.slice(0, 2),
-                cvc: cardCvc,
-            });
-
             const token_id = await generarToken({
                 number: cardNumber,
                 name: cardName,
@@ -109,35 +109,35 @@ const ViewCard = (props: ViewCardProps) => {
                 cvc: cardCvc,
             });
 
-            const data = {
-                clientId: userData.id,
-                deliveryAddressId: userData.deliveryAddressId,
-                totalPrice: props.total,
-                status: 'pending',
-                cartItems: props.cartItems,
-                email: userData.email,
-                name: userData.name,
-                phone: userData.phone,
-                token_id,
+            // Simulación de datos del usuario (reemplaza con tus datos reales)
+            const userData = {
+                name: 'Nombre del usuario',
+                email: 'usuario@ejemplo.com',
+                phone: '1234567890',
             };
 
-            console.log('Datos del pedido:', data);
+            const orderData = {
+                token_id,
+                totalPrice: props.total,
+                cartItems: props.cartItems,
+                name: userData.name,
+                email: userData.email,
+                phone: userData.phone,
+            };
 
-            const response = await axios.post('http://localhost:8084/api/orders/confirmOrder', data, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+            console.log('Datos del pedido a enviar:', orderData); // Log para depuración
+
+            const response = await axios.post('http://localhost:8084/api/orders/confirmOrder', orderData);
 
             if (response.status === 201) {
                 setMensajeExito('Pago realizado con éxito.');
                 setMensajeError('');
             } else {
-                setMensajeError('Error al confirmar el pedido.');
+                setMensajeError(`Error al procesar el pago: ${response.data.message || 'Error desconocido'}`); // Mensaje de error más detallado
             }
         } catch (error: any) {
-            setMensajeError(`Error al generar el token de tarjeta: ${error.message}`);
-            console.error('Error al enviar la petición:', error);
+            setMensajeError(`Error al procesar el pago: ${error.response?.data?.message || error.message}`); // Mensaje de error más detallado
+            console.error('Error al procesar el pago:', error);
         }
     };
 

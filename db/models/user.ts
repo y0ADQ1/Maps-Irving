@@ -2,6 +2,7 @@ require('dotenv').config();
 import { DataTypes, Sequelize } from "sequelize";
 import { Model } from 'sequelize';
 import bcrypt from 'bcrypt';
+import People from "./people";
 
 const sequelize = new Sequelize(
     process.env.DB_NAME ?? '',
@@ -76,5 +77,7 @@ Users.init({
         user.password = await bcrypt.hash(user.password, 10);
         },
     }
-}
+},
+
 );
+
